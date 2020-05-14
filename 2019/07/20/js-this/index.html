@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>JavaScript 中的 this 指向问题 | Evan Miao</title>
+    <meta name="generator" content="VuePress 1.5.0">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="description" content="一般情况下， this 不是函数定义时被绑定，而是函数调用时被绑定。箭头函数中的 this 在函数定义的时被绑定，指向的是它的外层调用者绑定的 this 。 this 绑定的四种方式：默认绑定、隐式绑定、显式绑定、构造绑定。">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <link rel="preload" href="/assets/css/0.styles.1c82c259.css" as="style"><link rel="preload" href="/assets/js/app.4a0e3077.js" as="script"><link rel="preload" href="/assets/js/6.f88797e7.js" as="script"><link rel="preload" href="/assets/js/3.57964153.js" as="script"><link rel="preload" href="/assets/js/17.2f9720dd.js" as="script"><link rel="prefetch" href="/assets/js/10.526f8a73.js"><link rel="prefetch" href="/assets/js/11.a4feb226.js"><link rel="prefetch" href="/assets/js/12.c3f83977.js"><link rel="prefetch" href="/assets/js/13.05d32138.js"><link rel="prefetch" href="/assets/js/14.81c71f8b.js"><link rel="prefetch" href="/assets/js/15.46cf69fb.js"><link rel="prefetch" href="/assets/js/16.a3769c74.js"><link rel="prefetch" href="/assets/js/18.adcc51eb.js"><link rel="prefetch" href="/assets/js/19.bd4300c7.js"><link rel="prefetch" href="/assets/js/20.c7b00391.js"><link rel="prefetch" href="/assets/js/21.7d2e2216.js"><link rel="prefetch" href="/assets/js/22.bb4a4534.js"><link rel="prefetch" href="/assets/js/23.1e96be66.js"><link rel="prefetch" href="/assets/js/24.d8486a10.js"><link rel="prefetch" href="/assets/js/4.3505d93e.js"><link rel="prefetch" href="/assets/js/5.7d0b8032.js"><link rel="prefetch" href="/assets/js/7.2d354cb4.js"><link rel="prefetch" href="/assets/js/8.d453fdbf.js"><link rel="prefetch" href="/assets/js/9.c5fcea20.js"><link rel="prefetch" href="/assets/js/vuejs-paginate.17dccdcb.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.1c82c259.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div id="vuepress-theme-blog__global-layout"><section id="header-wrapper"><header id="header"><div class="header-wrapper"><div class="title"><a href="/" class="nav-link home-link">Evan Miao </a></div> <div class="header-right-wrap"><ul class="nav"><li class="nav-item"><a href="/" class="nav-link">Home</a></li><li class="nav-item"><a href="/tag/" class="nav-link">Tag</a></li><li class="nav-item"><a href="/about/" class="nav-link">About</a></li><li class="nav-item"><a href="https://github.com/evanmiao" target="_blank" rel="noopener noreferrer" class="nav-link external">GitHub</a></li></ul> <div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></div></header></section> <div id="mobile-header"><div class="mobile-header-bar"><div class="mobile-header-title"><a href="/" class="nav-link mobile-home-link">Evan Miao </a> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div> <div class="mobile-menu-wrapper"><hr class="menu-divider"> <ul class="mobile-nav"><li class="mobile-nav-item"><a href="/" class="nav-link">Home</a></li><li class="mobile-nav-item"><a href="/tag/" class="nav-link">Tag</a></li><li class="mobile-nav-item"><a href="/about/" class="nav-link">About</a></li><li class="mobile-nav-item"><a href="https://github.com/evanmiao" target="_blank" rel="noopener noreferrer" class="nav-link external">GitHub</a></li> <li class="mobile-nav-item"><!----></li></ul></div></div></div> <div class="content-wrapper"><div id="vuepress-theme-blog__post-layout"><article itemscope="itemscope" itemtype="https://schema.org/BlogPosting" class="vuepress-blog-theme-content"><header><h1 itemprop="name headline" class="post-title">
+        JavaScript 中的 this 指向问题
+      </h1> <div class="post-meta"><!----> <div class="post-meta-date"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> <time pubdate itemprop="datePublished" datetime="2019-07-20T00:00:00.000Z">
+      Sat Jul 20 2019
+    </time></div> <ul itemprop="keywords" class="post-meta-tags"><li class="post-tag" data-v-d832e844><a href="/tag/JavaScript" data-v-d832e844> JavaScript </a></li><li class="post-tag" data-v-d832e844><a href="/tag/学习笔记" data-v-d832e844> 学习笔记 </a></li></ul></div></header> <div itemprop="articleBody" class="content__default"><h2 id="默认绑定"><a href="#默认绑定" class="header-anchor">#</a> 默认绑定</h2> <p>直接调用一个函数，并在这个函数中使用 <code>this</code> ，非严格模式下这个 this 默认指向全局对象（浏览器是<code>window</code>，Node中是<code>global</code>），严格模式下这个 <code>this</code> 是 <code>undefined</code> 。</p> <div class="language-js line-numbers-mode"><pre class="language-js"><code><span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 0</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br></div></div><h2 id="隐式绑定"><a href="#隐式绑定" class="header-anchor">#</a> 隐式绑定</h2> <p>作为对象方法调用时，函数中的 <code>this</code> 指向上级对象。</p> <div class="language-js line-numbers-mode"><pre class="language-js"><code><span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">var</span> obj <span class="token operator">=</span> <span class="token punctuation">{</span>
+  a<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+  test
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+obj<span class="token punctuation">.</span><span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 1</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br></div></div><p>函数 <code>test</code> 作为 <code>obj</code> 对象的方法被调用，<code>this</code> 指向 <code>obj</code> 对象。<br>
+一句话，被谁调用就指向谁。</p> <div class="language-js line-numbers-mode"><pre class="language-js"><code><span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">var</span> obj <span class="token operator">=</span> <span class="token punctuation">{</span>
+  a<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+  test
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token keyword">var</span> obj2 <span class="token operator">=</span> <span class="token punctuation">{</span>
+  a<span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span>
+  obj
+<span class="token punctuation">}</span>
+
+obj2<span class="token punctuation">.</span>obj<span class="token punctuation">.</span><span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 1</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br></div></div><p>指向直属上级对象（直接调用者）。</p> <div class="language-js line-numbers-mode"><pre class="language-js"><code><span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">test</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">var</span> obj <span class="token operator">=</span> <span class="token punctuation">{</span>
+  a<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+  test
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token keyword">var</span> test2 <span class="token operator">=</span> obj<span class="token punctuation">.</span>test<span class="token punctuation">;</span>
+
+<span class="token function">test2</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 0</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br></div></div><p><code>test2</code> 是直接调用，默认绑定全局对象。只看函数调用时的调用者。</p> <div class="language-js line-numbers-mode"><pre class="language-js"><code><span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">var</span> obj <span class="token operator">=</span> <span class="token punctuation">{</span>
+  a<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+  test
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token function">setTimeout</span><span class="token punctuation">(</span>obj<span class="token punctuation">.</span>test<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 0</span>
+<span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token string">'obj.test()'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 1</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br></div></div><p><code>setTimeout(obj.test)</code> 的参数接收了一个函数（ <code>obj</code> 对象的 <code>test</code> ）， <code>setTimeout</code> 代码执行时直接调用传入的函数，函数的调用者是全局对象；<br> <code>setTimeout('obj.test()')</code> 的参数接受了一段可执行代码， <code>setTimeout</code> 执行时通过 <code>obj</code> 对象来找到 <code>test</code> 函数并调用执行，函数的调用者是 <code>obj</code> 对象。</p> <h2 id="显式绑定"><a href="#显式绑定" class="header-anchor">#</a> 显式绑定</h2> <h3 id="call-、apply"><a href="#call-、apply" class="header-anchor">#</a> call()、apply()</h3> <p><code>call()</code> 和 <code>apply()</code> 是函数的方法，作用是改变函数的调用对象。它的第一个参数指定改变后的调用这个函数的对象。<br> <code>call()</code> 方法的作用和 <code>apply()</code> 方法类似，区别就是 <code>call()</code> 方法第二个参数接受的是参数列表，而 <code>apply()</code> 方法接受的是一个参数数组。</p> <div class="language-js line-numbers-mode"><pre class="language-js"><code><span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">var</span> obj <span class="token operator">=</span> <span class="token punctuation">{</span>
+  a<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+  test
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+test2 <span class="token operator">=</span> obj<span class="token punctuation">.</span>test<span class="token punctuation">;</span>
+
+<span class="token function">test2</span><span class="token punctuation">.</span><span class="token function">call</span><span class="token punctuation">(</span>obj<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 1</span>
+<span class="token function">test2</span><span class="token punctuation">.</span><span class="token function">apply</span><span class="token punctuation">(</span>obj<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 1</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br></div></div><p><code>this</code> 指向 <code>call()</code> 或 <code>apply()</code> 的第一个参数。</p> <div class="language-js line-numbers-mode"><pre class="language-js"><code><span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">var</span> obj <span class="token operator">=</span> <span class="token punctuation">{</span>
+  a<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+  test
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+obj<span class="token punctuation">.</span><span class="token function">test</span><span class="token punctuation">.</span><span class="token function">apply</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 0</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br></div></div><p>非严格模式下，参数为空或 <code>null</code> 或 <code>undefined</code> 时会自动指向全局对象（浏览器中就是 <code>window</code> 对象）；<br>
+值为原始值（数字，字符串，布尔值）的 this 会指向该原始值的自动包装对象。</p> <h3 id="bind"><a href="#bind" class="header-anchor">#</a> bind()</h3> <blockquote><p><code>bind()</code> 方法创建一个新的函数，在 <code>bind()</code> 被调用时，这个新函数的 <code>this</code> 被 <code>bind</code> 的第一个参数指定，其余的参数将作为新函数的参数供调用时使用。</p></blockquote> <p><code>bind()</code> 方法与 <code>call()</code> 方法和 <code>apply()</code> 方法类似，区别是 <code>bind</code> 会创建一个新的函数，我们必须要手动去调用。而 <code>call</code> 和 <code>apply</code> 会立即调用执行。</p> <div class="language-js line-numbers-mode"><pre class="language-js"><code><span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">var</span> obj <span class="token operator">=</span> <span class="token punctuation">{</span>
+  a<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+  test
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+test2 <span class="token operator">=</span> obj<span class="token punctuation">.</span>test<span class="token punctuation">;</span>
+
+<span class="token function">test</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span>obj<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 1</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br></div></div><p>需要注意的是，使用<code>call</code> 和 <code>apply</code> 时，如果函数用 <code>bind</code> 绑定了 <code>this</code> 对象，那么 <code>call</code> 和 <code>apply</code> 不会像预期那样执行，比如：</p> <div class="language-js line-numbers-mode"><pre class="language-js"><code><span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">var</span> obj <span class="token operator">=</span> <span class="token punctuation">{</span>
+  a<span class="token operator">:</span> <span class="token number">1</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token keyword">var</span> test2 <span class="token operator">=</span> <span class="token function">test</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 期望 this 指向 obj ，即输出 1</span>
+<span class="token comment">// 但是因为 test2 绑定了不是 obj 的对象，所以会输出 undefined</span>
+<span class="token function">test</span><span class="token punctuation">.</span><span class="token function">apply</span><span class="token punctuation">(</span>obj<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 1</span>
+<span class="token function">test2</span><span class="token punctuation">.</span><span class="token function">apply</span><span class="token punctuation">(</span>obj<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// undefined</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br></div></div><h2 id="构造绑定"><a href="#构造绑定" class="header-anchor">#</a> 构造绑定</h2> <p>用 <code>new</code> 调用一个构造函数，会创建一个新对象，而其中的 <code>this</code> 就指向这个新对象。</p> <div class="language-js line-numbers-mode"><pre class="language-js"><code><span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">test</span><span class="token punctuation">(</span><span class="token parameter">a</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">this</span><span class="token punctuation">.</span>a <span class="token operator">=</span> a<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">var</span> b <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">test</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>b<span class="token punctuation">.</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 1</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 0</span>
+
+<span class="token keyword">var</span> c <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">test</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>b <span class="token operator">===</span> c<span class="token punctuation">)</span><span class="token punctuation">;</span>   <span class="token comment">// false</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br></div></div><h2 id="箭头函数"><a href="#箭头函数" class="header-anchor">#</a> 箭头函数</h2> <p>箭头函数中的 <code>this</code> 在函数定义的时被绑定，指向的是它的外层调用者绑定的 <code>this</code> 。</p> <div class="language-js line-numbers-mode"><pre class="language-js"><code><span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">var</span> <span class="token function-variable function">test</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token keyword">var</span> obj <span class="token operator">=</span> <span class="token punctuation">{</span>
+  a<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+  test
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+obj<span class="token punctuation">.</span><span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 0</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br></div></div><p>箭头函数不能用 <code>new</code> 调用，不能 <code>bind</code> 到某个对象（虽然 <code>bind()</code> 方法调用没问题，但是不会产生预期效果）。不管在什么情况下使用箭头函数，它本身是没有绑定 <code>this</code> 的，它用的是直接外层函数（即包含它的最近的一层函数或函数表达式）绑定的 <code>this</code> 。</p></div> <footer><!----> <hr> <!----></footer></article> <div class="sticker vuepress-toc"><div class="vuepress-toc-item vuepress-toc-h2 active"><a href="#默认绑定" title="默认绑定">默认绑定</a></div><div class="vuepress-toc-item vuepress-toc-h2"><a href="#隐式绑定" title="隐式绑定">隐式绑定</a></div><div class="vuepress-toc-item vuepress-toc-h2"><a href="#显式绑定" title="显式绑定">显式绑定</a></div><div class="vuepress-toc-item vuepress-toc-h3"><a href="#call-、apply" title="call()、apply()">call()、apply()</a></div><div class="vuepress-toc-item vuepress-toc-h3"><a href="#bind" title="bind()">bind()</a></div><div class="vuepress-toc-item vuepress-toc-h2"><a href="#构造绑定" title="构造绑定">构造绑定</a></div><div class="vuepress-toc-item vuepress-toc-h2"><a href="#箭头函数" title="箭头函数">箭头函数</a></div></div></div></div> <footer class="footer" data-v-fdbf4940><div class="footer-left-wrap" data-v-fdbf4940><ul class="contact" data-v-fdbf4940><li class="contact-item" data-v-fdbf4940><a href="https://github.com/evanmiao" target="_blank" rel="noopener noreferrer" class="nav-link external" data-v-fdbf4940><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github" data-v-fdbf4940><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" data-v-fdbf4940></path></svg>
+          
+        </a></li><li class="contact-item" data-v-fdbf4940><a href="mailto:evan.c.miao@gmail.com" class="nav-link external" data-v-fdbf4940><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail" data-v-fdbf4940><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-v-fdbf4940></path><polyline points="22,6 12,13 2,6" data-v-fdbf4940></polyline></svg>
+          
+        </a></li></ul></div> <div class="footer-right-wrap" data-v-fdbf4940><ul class="copyright" data-v-fdbf4940><li class="copyright-item" data-v-fdbf4940><a href="https://vuepress.vuejs.org/" target="_blank" rel="noopener noreferrer" class="nav-link external" data-v-fdbf4940>Powered by VuePress</a></li><li class="copyright-item" data-v-fdbf4940><a href="/" class="nav-link" data-v-fdbf4940>Copyright © 2019 Evan Miao</a></li></ul></div></footer></div><div class="global-ui"><!----></div></div>
+    <script src="/assets/js/app.4a0e3077.js" defer></script><script src="/assets/js/6.f88797e7.js" defer></script><script src="/assets/js/3.57964153.js" defer></script><script src="/assets/js/17.2f9720dd.js" defer></script>
+  </body>
+</html>
